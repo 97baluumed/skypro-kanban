@@ -29,7 +29,7 @@ export const cardsData = [
     },
     {
         id: 5,
-        topic: "Web Design",
+        topic: "Research",
         title: "Название задачи",
         date: "30.10.23",
         status: "Без статуса",
