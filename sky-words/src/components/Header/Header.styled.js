@@ -6,7 +6,7 @@ export const HeaderWrapper = styled.header`
 `;
 
 export const Container = styled.div`
-  max-width: 1440px;
+  max-width: 1460px;
   width: 100%;
   margin: 0 auto;
 `;
@@ -16,6 +16,7 @@ export const HeaderBlock = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+      padding: 0 10px;
 `;
 
 export const Logo = styled.div`

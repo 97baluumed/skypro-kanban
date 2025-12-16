@@ -6,6 +6,7 @@ import {
     LoadingButton,
     LoadingContent,
     LoadingTitle,
+    LoadingSubtitle,
     LoadingDate,
     LoadingDateIcon,
     LoadingDateText,
@@ -25,6 +26,7 @@ export function LoadingCard() {
                 </LoadingGroup>
                 <LoadingContent>
                     <LoadingTitle />
+                    <LoadingSubtitle />
                     <LoadingDate>
                         <LoadingDateIcon />
                         <LoadingDateText />
