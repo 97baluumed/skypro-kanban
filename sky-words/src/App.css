@@ -78,7 +78,7 @@ body {
   color: #FFFFFF;
 }
 
-.pop-user-set:target,
+.header__pop-user-set,
 .pop-exit:target,
 .pop-new-card:target,
 .pop-browse:target {
@@ -763,6 +763,8 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #565EEF;
+  border: none;
+  background-color: rgba(255, 255, 255, 0);
 }
 .header__user::after {
   content: "";
@@ -777,7 +779,6 @@ body {
   padding: 0;
 }
 .header__pop-user-set {
-  display: none;
   position: absolute;
   top: 61px;
   right: 0;
@@ -825,7 +826,8 @@ body {
 
 .cards {
   width: 100%;
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 .cards__item {
@@ -916,7 +918,7 @@ body {
     padding: 40px 0 64px;
   }
   .main__content {
-    display: block;
+    display: flex;
   }
   .main__column {
     width: 100%;
@@ -1085,5 +1087,45 @@ body {
   }
   .pop-exit__form-group {
     display: block;
+  }
+}
+
+._skeleton {
+  background: #EAEEF6;
+  border-radius: 8px;
+  animation: pulse 1.6s infinite ease-in-out;
+}
+
+.card__theme._skeleton {
+  width: 70px;
+  height: 20px;
+}
+
+.card__title._skeleton {
+  width: 150px;
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.card__date-icon._skeleton {
+  width: 13px;
+  height: 13px;
+}
+
+.card__date-text._skeleton {
+  width: 60px;
+  height: 10px;
+  margin-left: 6px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
   }
 }
