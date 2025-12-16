@@ -6,10 +6,9 @@ export const HeaderWrapper = styled.header`
 `;
 
 export const Container = styled.div`
-  max-width: 1260px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 30px;
 `;
 
 export const HeaderBlock = styled.div`
@@ -17,7 +16,6 @@ export const HeaderBlock = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
 `;
 
 export const Logo = styled.div`

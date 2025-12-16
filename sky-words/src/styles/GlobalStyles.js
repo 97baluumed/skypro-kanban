@@ -1,4 +1,21 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, keyframes } from 'styled-components';
+
+// Экспортируем keyframes как JS
+export const pulse = keyframes`
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+`;
+
+export const fade = keyframes`
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+`;
+
+export const cardAnimation = keyframes`
+  0% { height: 0; opacity: 0; }
+  100% { height: auto; opacity: 1; }
+`;
 
 export const GlobalStyles = createGlobalStyle`
   *,
@@ -27,21 +44,21 @@ export const GlobalStyles = createGlobalStyle`
     list-style: none;
   }
 
-  @keyframes card-animation {
-    0% { height: 0; opacity: 0; }
-    100% { height: auto; opacity: 1; }
+  /* Оставляем для совместимости, но основная анимация — через JS */
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
   }
-
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
 
   @keyframes fade {
     from { opacity: 0.6; }
     to { opacity: 1; }
+  }
+
+  @keyframes card-animation {
+    0% { height: 0; opacity: 0; }
+    100% { height: auto; opacity: 1; }
   }
 
   html,

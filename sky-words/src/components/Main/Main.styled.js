@@ -12,6 +12,7 @@ export const MainContent = styled.div`
   gap: 19px;
   padding: 0 30px;
   flex-wrap: wrap;
+  justify-content: center;
 `;
 
 export const LoadingState = styled.div`

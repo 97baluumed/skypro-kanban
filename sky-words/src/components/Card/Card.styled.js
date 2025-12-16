@@ -1,8 +1,9 @@
 import styled from 'styled-components';
+import { cardAnimation } from '../../styles/GlobalStyles'; // ✅
 
 export const CardItem = styled.div`
   padding: 5px;
-  animation: card-animation 500ms linear;
+  animation: ${cardAnimation} 500ms linear;
 `;
 
 export const CardWrapper = styled.div`

@@ -1,13 +1,13 @@
 import styled from 'styled-components';
+import { pulse } from '../../styles/GlobalStyles'; // ✅ импортируем
 
-// Единый стиль для всех скелетов
 export const Skeleton = styled.div`
   background: #eaeef6;
   border-radius: 8px;
-  animation: pulse 1.6s infinite ease-in-out;
+  animation: ${pulse} 1.6s infinite ease-in-out; /* ✅ теперь работает */
 `;
 
-// Обёртка — как у реальной карточки
+// Остальное без изменений
 export const LoadingItem = styled.div`
   padding: 5px;
 `;
@@ -31,14 +31,12 @@ export const LoadingGroup = styled.div`
   align-items: center;
 `;
 
-// Тема — серая полоска
 export const LoadingTheme = styled.div`
   width: 70px;
   height: 20px;
   ${Skeleton}
 `;
 
-// Кнопка с тремя полосками
 export const LoadingButton = styled.div`
   width: 18px;
   display: flex;
@@ -58,7 +56,6 @@ export const LoadingContent = styled.div`
   gap: 10px;
 `;
 
-// Заголовок — длинная полоска
 export const LoadingTitle = styled.div`
   width: 150px;
   height: 18px;
@@ -71,14 +68,12 @@ export const LoadingDate = styled.div`
   gap: 6px;
 `;
 
-// Иконка календаря
 export const LoadingDateIcon = styled.div`
   width: 13px;
   height: 13px;
   ${Skeleton}
 `;
 
-// Текст даты
 export const LoadingDateText = styled.div`
   width: 60px;
   height: 10px;
