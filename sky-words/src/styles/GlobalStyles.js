@@ -699,31 +699,4 @@ body {
   color: #94A6BE;
   letter-spacing: 0.2px;
 }
-._skeleton {
-  background: #EAEEF6;
-  border-radius: 8px;
-  animation: pulse 1.6s infinite ease-in-out;
-}
-
-.card__theme._skeleton {
-  width: 70px;
-  height: 20px;
-}
-
-.card__title._skeleton {
-  width: 150px;
-  height: 18px;
-  margin-bottom: 10px;
-}
-
-.card__date-icon._skeleton {
-  width: 13px;
-  height: 13px;
-}
-
-.card__date-text._skeleton {
-  width: 60px;
-  height: 10px;
-  margin-left: 6px;
-}
 `;

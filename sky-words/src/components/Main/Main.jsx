@@ -3,7 +3,7 @@ import { Column } from '../Column/Column';
 import { Card } from '../Card/Card';
 import { LoadingCard } from '../LoadingCard/LoadingCard';
 import { cardsData } from '../../data';
-import { MainWrapper, MainContent, LoadingText } from './Main.styled';
+import { MainWrapper, MainContent } from './Main.styled';
 
 const groupedCards = cardsData.reduce((acc, card) => {
     const status = card.status;

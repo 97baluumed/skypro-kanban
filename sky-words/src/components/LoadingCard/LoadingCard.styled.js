@@ -6,82 +6,69 @@ export const Skeleton = styled.div`
   border-radius: 8px;
   animation: ${pulse} 1.6s infinite ease-in-out;
 `;
-export const LoadingItem = styled.div`
-  padding: 5px;
-`;
 export const LoadingWrapper = styled.div`
-  width: 274px;
-  min-height: 112px;
+  width: 220px;
+  height: 130px;
   border-radius: 10px;
   border: 0.7px solid #e0e0e0;
   background: #fff;
   box-shadow: 0 10px 39px 0 rgba(26, 56, 101, 0.07);
   display: flex;
   flex-direction: column;
-  padding: 14px;
+  padding-top: 15px;
+  padding-left: 13px;
+  padding-right: 13px;
   gap: 12px;
 `;
-
 export const LoadingGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+display: flex;
+flex-direction: column;
+gap: 36px;
 `;
-
-export const LoadingTheme = styled.div`
-  width: 70px;
-  height: 20px;
-  ${Skeleton}
+export const LoadingText = styled.div`
+display: flex;
+justify-content: space-between;
+align-items: center;
 `;
-
 export const LoadingButton = styled.div`
   width: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-
-  div {
-    width: 100%;
-    height: 2px;
-    ${Skeleton}
-  }
-`;
-
-export const LoadingContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-export const LoadingTitle = styled.div`
-  width: 100%;
-  height: 14px;
-  max-width: 150px;
-  ${Skeleton}
-`;
-
-export const LoadingSubtitle = styled.div`
-  width: 100%;
-  height: 10px;
-  max-width: 120px;
-  ${Skeleton}
-`;
-
-export const LoadingDate = styled.div`
+  height: 24px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-`;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
 
-export const LoadingDateIcon = styled.div`
-  width: 13px;
-  height: 13px;
-  ${Skeleton}
+  div {
+    width: 4px;
+    height: 4px;
+    background: #94a6be;
+    border-radius: 50%;
+  }
 `;
-
-export const LoadingDateText = styled.div`
-  width: 60px;
-  height: 10px;
-  ${Skeleton}
+export const LoadingContent = styled.div`
+width: 113px;
+height: 13px;
+background: linear-gradient(90.00deg, 
+rgba(193.26, 204.72, 220, 1),
+rgba(233.02, 237.53, 246.56, 1) 46%,
+rgba(193, 205, 220, 1) 97%);
+`;
+export const LoadingTitle = styled.div`
+margin: 0px;
+width: 82px;
+height: 20px;
+border-radius: 18px;
+background: linear-gradient(90.00deg,
+ rgba(193.26, 204.72, 220, 1),
+ rgba(233.02, 237.53, 246.56, 1) 46%,
+ rgba(193, 205, 220, 1) 97%);
+`;
+export const LoadingDate = styled.div`
+width: 58px;
+height: 13px;
+background: linear-gradient(90.00deg, 
+rgba(193.26, 204.72, 220, 1),
+rgba(233.02, 237.53, 246.56, 1) 46%,
+rgba(193, 205, 220, 1) 97%);
 `;

@@ -3,10 +3,12 @@ import styled from 'styled-components';
 export const HeaderWrapper = styled.header`
   width: 100%;
   background-color: #fff;
+  padding-left: 135px;
+  padding-right: 129px;
 `;
 
 export const Container = styled.div`
-  max-width: 1460px;
+  /* max-width: 1200px; */
   width: 100%;
   margin: 0 auto;
 `;
@@ -95,7 +97,7 @@ export const UserButton = styled.button`
 export const UserMenu = styled.div`
   position: absolute;
   top: 61px;
-  right: 0;
+  right: 128px;
   width: 213px;
   height: 205px;
   border-radius: 10px;

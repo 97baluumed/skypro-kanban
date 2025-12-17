@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 export const ColumnWrapper = styled.div`
-  width: 274px; /* ✅ Точная ширина из макета */
-  flex-shrink: 0; /* Чтобы не сжималась */
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
 `;
@@ -23,5 +22,5 @@ export const ColumnTitleText = styled.p`
 export const CardsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Отступ между карточками */
+  gap: 10px;
 `;
