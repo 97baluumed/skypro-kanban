@@ -1,18 +1,14 @@
 import styled from 'styled-components';
 import { pulse } from '../../styles/GlobalStyles';
 
-// Основной стиль скелета
 export const Skeleton = styled.div`
   background: #eaeef6;
   border-radius: 8px;
   animation: ${pulse} 1.6s infinite ease-in-out;
 `;
-
-// Обёртка
 export const LoadingItem = styled.div`
   padding: 5px;
 `;
-
 export const LoadingWrapper = styled.div`
   width: 274px;
   min-height: 112px;
@@ -32,14 +28,12 @@ export const LoadingGroup = styled.div`
   align-items: center;
 `;
 
-// Тема — короткая полоска
 export const LoadingTheme = styled.div`
   width: 70px;
   height: 20px;
   ${Skeleton}
 `;
 
-// Кнопка "три точки"
 export const LoadingButton = styled.div`
   width: 18px;
   display: flex;
@@ -59,7 +53,6 @@ export const LoadingContent = styled.div`
   gap: 8px;
 `;
 
-// Заголовок — длинная полоска
 export const LoadingTitle = styled.div`
   width: 100%;
   height: 14px;
@@ -67,7 +60,6 @@ export const LoadingTitle = styled.div`
   ${Skeleton}
 `;
 
-// Подзаголовок — короткая полоска (имитация обрезанного текста)
 export const LoadingSubtitle = styled.div`
   width: 100%;
   height: 10px;
@@ -75,7 +67,6 @@ export const LoadingSubtitle = styled.div`
   ${Skeleton}
 `;
 
-// Дата
 export const LoadingDate = styled.div`
   display: flex;
   align-items: center;
