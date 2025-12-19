@@ -1,8 +1,9 @@
-import { Column } from "../Column/Column";
-import { Card } from "../Card/Card";
 import { useState, useEffect } from 'react';
-import { cardsData } from "../../data";
-import { LoadingCard } from "../LoadingCard/LoadingCard";
+import { Column } from '../Column/Column';
+import { Card } from '../Card/Card';
+import { LoadingCard } from '../LoadingCard/LoadingCard';
+import { cardsData } from '../../data';
+import { MainWrapper, MainContent } from './Main.styled';
 
 const groupedCards = cardsData.reduce((acc, card) => {
     const status = card.status;
@@ -12,11 +13,11 @@ const groupedCards = cardsData.reduce((acc, card) => {
 }, {});
 
 const statuses = [
-    "Без статуса",
-    "Нужно сделать",
-    "В работе",
-    "Тестирование",
-    "Готово",
+    'Без статуса',
+    'Нужно сделать',
+    'В работе',
+    'Тестирование',
+    'Готово',
 ];
 
 export function Main() {
@@ -30,49 +31,32 @@ export function Main() {
     }, []);
 
     return (
-        <main className="main">
-            <div className="container">
-                <div className="main__block">
-                    <div className="main__content">
-                        {loading ? (
-                            statuses.map((status) => {
-                                const count = groupedCards[status]?.length || 0;
-                                return (
-                                    <div className="main__column" key={status}>
-                                        <div className="column__title">
-                                            <p>{status}</p>
-                                        </div>
-                                        <div className="cards">
-                                            {Array.from({ length: count }).map((_, index) => (
-                                                <LoadingCard key={index} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            statuses.map((status) => (
-                                <Column key={status} title={status}>
-                                    {groupedCards[status]?.map((card) => (
-                                        <Card
-                                            key={card.id}
-                                            theme={
-                                                card.topic === "Web Design"
-                                                    ? "orange"
-                                                    : card.topic === "Research"
-                                                        ? "green"
-                                                        : "purple"
-                                            }
-                                            title={card.title}
-                                            date={card.date}
-                                        />
-                                    ))}
-                                </Column>
-                            ))
-                        )}
-                    </div>
-                </div>
-            </div>
-        </main>
+        <MainWrapper>
+            <MainContent>
+                {loading
+                    ? statuses.map((status) => {
+                        const count = groupedCards[status]?.length || 0;
+                        return (
+                            <Column key={status} title={status}>
+                                {Array.from({ length: count }).map((_, index) => (
+                                    <LoadingCard key={index} />
+                                ))}
+                            </Column>
+                        );
+                    })
+                    : statuses.map((status) => (
+                        <Column key={status} title={status}>
+                            {groupedCards[status]?.map((card) => (
+                                <Card
+                                    key={card.id}
+                                    theme={card.topic === 'Web Design' ? 'orange' : card.topic === 'Research' ? 'green' : 'purple'}
+                                    title={card.title}
+                                    date={card.date}
+                                />
+                            ))}
+                        </Column>
+                    ))}
+            </MainContent>
+        </MainWrapper>
     );
 }
