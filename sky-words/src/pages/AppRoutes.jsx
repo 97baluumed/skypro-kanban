@@ -3,11 +3,11 @@ import { useState } from 'react';
 import MainPage from './MainPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
-import ExitPage from './ExitPage';
-import NotFoundPage from './NotFoundPage';
-import CardPage from './CardPage';
+import ExitPage from './components/ExitPage/ExitPage';
+import NotFoundPage from './components/NotFoundPage/NotFoundPage';
+import CardPage from './components/CardPage/CardPage';
 import PrivateRoute from './PrivateRoute';
-import NewCardPage from './NewCardPage';
+import NewCardPage from './components/NewCardPage/NewCardPage';
 
 function AppRoutes() {
     // При обновлении страницы сбрасывает isAuth до false

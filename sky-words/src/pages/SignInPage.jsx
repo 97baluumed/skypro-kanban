@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SignIn } from './components/SignIn';
+import { SignIn } from './modal/SignIn';
 
 export default function SignInPage({ onLogin }) {
     const [email, setEmail] = useState('');

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link as RouterLink } from 'react-router-dom';
 
-const HeaderBar = styled.div`
+export const HeaderBar = styled.div`
   width: 100%;
   height: 60px;
   background: #000;
@@ -15,17 +15,17 @@ const HeaderBar = styled.div`
   z-index: 1000;
   border-radius: 14px;
 `;
-const LogoLink = styled(RouterLink)`
+export const LogoLink = styled(RouterLink)`
   display: flex;
   align-items: center;
   height: 30px;
 `;
-const LogoImage = styled.img`
+export const LogoImage = styled.img`
   height: 100%;
   width: auto;
   filter: brightness(1);
 `;
-const PageWrapper = styled.div`
+export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,18 +37,18 @@ const PageWrapper = styled.div`
   padding: 80px 20px 20px;
   box-sizing: border-box;
 `;
-const Title = styled.h1`
+export const Title = styled.h1`
   font-size: 72px;
   font-weight: 900;
   margin: 0;
   color: #000;
 `;
-const Text = styled.p`
+export const Text = styled.p`
   font-size: 18px;
   color: #000;
   margin: 20px 0;
 `;
-const HomeLink = styled(RouterLink)`
+export const HomeLink = styled(RouterLink)`
   color: #565EEF;
   text-decoration: none;
   font-weight: 500;
@@ -57,21 +57,3 @@ const HomeLink = styled(RouterLink)`
     text-decoration: underline;
   }
 `;
-
-export default function NotFoundPage() {
-  return (
-    <>
-      <HeaderBar>
-        <LogoLink to="/">
-          <LogoImage src="./images/logo_dark.png" alt="logo" />
-        </LogoLink>
-      </HeaderBar>
-
-      <PageWrapper>
-        <Title>404</Title>
-        <Text>Страница не найдена</Text>
-        <HomeLink to="/">На главную</HomeLink>
-      </PageWrapper>
-    </>
-  );
-}

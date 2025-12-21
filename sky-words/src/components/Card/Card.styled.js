@@ -4,7 +4,6 @@ import { cardAnimation } from '../../styles/GlobalStyles';
 export const CardItem = styled.div`
   animation: ${cardAnimation} 500ms linear;
 `;
-
 export const CardWrapper = styled.div`
   width: 220px;
   height: 130px;
@@ -19,13 +18,11 @@ export const CardWrapper = styled.div`
   padding-right: 13px;
   gap: 12px;
 `;
-
 export const CardGroup = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
-
 export const CardTheme = styled.div`
   width: fit-content;
   padding: 4px 8px;
@@ -46,7 +43,6 @@ export const CardTheme = styled.div`
   font-weight: 500;
   line-height: 1;
 `;
-
 export const CardButton = styled.div`
   width: 18px;
   height: 24px;
@@ -63,14 +59,11 @@ export const CardButton = styled.div`
     border-radius: 50%;
   }
 `;
-
-
 export const CardContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 36px;
 `;
-
 export const CardTitle = styled.h3`
   font-size: 14px;
   font-weight: 500;
@@ -79,7 +72,6 @@ export const CardTitle = styled.h3`
   margin: 0;
   padding: 0;
 `;
-
 export const CardDate = styled.div`
   display: flex;
   align-items: center;

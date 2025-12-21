@@ -1,10 +1,6 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { cardsData } from '../data';
 import styled from 'styled-components';
-import { Calendar } from '../components/Calendar/Calendar';
 
-const Overlay = styled.div`
+export const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -17,7 +13,7 @@ const Overlay = styled.div`
   z-index: 999;
   padding: 20px;
 `;
-const ModalBlock = styled.div`
+export const ModalBlock = styled.div`
   box-sizing: border-box;
   border: 0.7px solid var(--stroke light, rgba(212, 219, 229, 1));
   border-radius: 10px;
@@ -27,7 +23,7 @@ const ModalBlock = styled.div`
   gap: 18;
   padding: 40px 30px 48px 30px;
 `;
-const Title = styled.h3`
+export const Title = styled.h3`
   width: 163px;
   height: 23px;
   color: var(--Black / 90, rgba(0, 0, 0, 1));
@@ -38,7 +34,7 @@ const Title = styled.h3`
   letter-spacing: 0px;
   text-align: left;
 `;
-const ThemeTag = styled.div`
+export const ThemeTag = styled.div`
   width: 115px;
   height: 30px;
   display: flex;
@@ -53,19 +49,19 @@ const ThemeTag = styled.div`
   letter-spacing: 0%;
   text-align: center;
   color: ${props => {
-    if (props.$themeType === 'orange') return '#ee9900';
-    if (props.$themeType === 'green') return '#06b16e';
-    if (props.$themeType === 'purple') return '#9a48f1';
-    return '#94a6be';
-  }};
+        if (props.$themeType === 'orange') return '#ee9900';
+        if (props.$themeType === 'green') return '#06b16e';
+        if (props.$themeType === 'purple') return '#9a48f1';
+        return '#94a6be';
+    }};
   background: ${props => {
-    if (props.$themeType === 'orange') return '#ffe4c2';
-    if (props.$themeType === 'green') return '#b4fdd1';
-    if (props.$themeType === 'purple') return '#e9d4ff';
-    return '#eaeef6';
-  }};
+        if (props.$themeType === 'orange') return '#ffe4c2';
+        if (props.$themeType === 'green') return '#b4fdd1';
+        if (props.$themeType === 'purple') return '#e9d4ff';
+        return '#eaeef6';
+    }};
 `;
-const StatusLabel = styled.p`
+export const StatusLabel = styled.p`
 width: 45px;
 height: 16px;
 color: var(--Black / 90, rgba(0, 0, 0, 1));
@@ -77,7 +73,7 @@ letter-spacing: 0px;
 text-align: left;
 margin-bottom: 14px;
 `;
-const StatusValue = styled.div`
+export const StatusValue = styled.div`
 width: 136px;
 height: 30px;
 display: flex;
@@ -95,7 +91,7 @@ letter-spacing: 0%;
 text-align: center;
 margin-bottom: 18px;
 `;
-const TextArea = styled.textarea`
+export const TextArea = styled.textarea`
   width: 100%;
   max-width: 370px;
   min-height: 200px;
@@ -119,7 +115,7 @@ const TextArea = styled.textarea`
     border-color: #565eef;
   }
 `;
-const StatusText = styled.p`
+export const StatusText = styled.p`
   width: 115px;
   height: 16px;
   color: var(--Black / 90, rgba(0, 0, 0, 1));
@@ -131,7 +127,7 @@ const StatusText = styled.p`
   text-align: left;
   margin-bottom: 14px;
 `;
-const CalendarWrapper = styled.div`
+export const CalendarWrapper = styled.div`
   .calendar__ttl,
   .calendar__p,
   .date-control {
@@ -146,15 +142,15 @@ const CalendarWrapper = styled.div`
     font-weight: 500;
   }
 `;
-const ButtonGroup = styled.div`
+export const ButtonGroup = styled.div`
   display: flex;
   gap: 169px;
 `;
-const ButtonAction = styled.div`
+export const ButtonAction = styled.div`
   display: flex;
   gap: 8px;
 `;
-const Button = styled.button`
+export const Button = styled.button`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -188,7 +184,7 @@ const Button = styled.button`
     color: rgba(255, 255, 255, 1);
   }
 `;
-const CloseButton = styled.button`
+export const CloseButton = styled.button`
   width: 86px;
   height: 30px;
   display: flex;
@@ -207,69 +203,12 @@ const CloseButton = styled.button`
     color: rgba(255, 255, 255, 1);
   }
 `;
-const GroupTextDate = styled.button`
+export const GroupTextDate = styled.button`
   display: flex;
   background-color: rgba(0, 0, 0, 0);
   border: none;
   justify-content: space-between;
 `;
-const ContentBlock = styled.div`
+export const ContentBlock = styled.div`
   flex: 1;
 `;
-
-export default function CardPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const card = cardsData.find(c => c.id === Number(id));
-
-  useEffect(() => {
-    if (!card) {
-      navigate('/not-found', { replace: true });
-    }
-  }, [card, navigate]);
-
-  if (!card) {
-    return null;
-  }
-
-  const themeType = card.topic === 'Web Design' ? 'orange' :
-    card.topic === 'Research' ? 'green' : 'purple';
-
-  return (
-    <Overlay>
-      <ModalBlock>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-          <Title>{card.title}</Title>
-          <ThemeTag $themeType={themeType}>{card.topic}</ThemeTag>
-        </div>
-        <StatusLabel>Статус</StatusLabel>
-        <StatusValue>{card.status}</StatusValue>
-        <GroupTextDate>
-          <ContentBlock>
-            <StatusText>Описание задачи</StatusText>
-            <TextArea
-              defaultValue={card.description || 'Описание отсутствует'}
-              readOnly
-            />
-          </ContentBlock>
-          <CalendarWrapper>
-            <Calendar
-              selectedDate={card.date}
-              periodText="Срок исполнения:"
-            />
-          </CalendarWrapper>
-        </GroupTextDate>
-        <ButtonGroup>
-          <ButtonAction>
-            <Button className="edit">Редактировать задачу</Button>
-            <Button className="delete">Удалить задачу</Button>
-          </ButtonAction>
-          <CloseButton onClick={() => window.history.back()}>
-            Закрыть
-          </CloseButton>
-        </ButtonGroup>
-      </ModalBlock>
-    </Overlay>
-  );
-}

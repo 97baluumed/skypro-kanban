@@ -1,7 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const ExitWrapper = styled.div`
+export const ExitWrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -13,8 +12,7 @@ const ExitWrapper = styled.div`
   justify-content: center;
   z-index: 1000;
 `;
-
-const ExitBlock = styled.div`
+export const ExitBlock = styled.div`
   display: flex;
   max-width: 370px;
   width: 100%;
@@ -27,8 +25,7 @@ const ExitBlock = styled.div`
   flex-direction: column;
   align-items: center;
 `;
-
-const Title = styled.h2`
+export const Title = styled.h2`
   width: 190px;
   height: 30px;
   color: var(--Black / 90, rgba(0, 0, 0, 1));
@@ -39,15 +36,13 @@ const Title = styled.h2`
   letter-spacing: -2%;
   text-align: center;
 `;
-
-const ButtonGroup = styled.div`
+export const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
   gap: 7px;
 `;
-
-const Button = styled.button`
+export const Button = styled.button`
   width: 153px;
   height: 30px;
   border-radius: 4px;
@@ -74,24 +69,3 @@ const Button = styled.button`
   }
   }
 `;
-
-export default function ExitPage({ onConfirm }) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    onConfirm();
-    navigate('/login', { replace: true });
-  };
-
-  return (
-    <ExitWrapper>
-      <ExitBlock>
-        <Title>Выйти из аккаунта?</Title>
-        <ButtonGroup>
-          <Button className="yes" onClick={handleLogout}>Да, выйти</Button>
-          <Button className="no" onClick={() => navigate(-1)}>Нет, остаться</Button>
-        </ButtonGroup>
-      </ExitBlock>
-    </ExitWrapper>
-  );
-}

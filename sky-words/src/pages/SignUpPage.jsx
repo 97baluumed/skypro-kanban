@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SignUp } from './components/SignUp';
+import { SignUp } from './modal/SignUp';
 
 export default function SignUpPage({ onLogin }) {
     const [name, setName] = useState('');
