@@ -13,6 +13,7 @@ import {
     ThemeToggle,
     ExitButton,
 } from './Header.styled';
+import { Link } from 'react-router-dom';
 
 export function Header() {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -33,7 +34,9 @@ export function Header() {
                     </Logo>
                     <Nav>
                         <NewTaskButton id="btnMainNew">
-                            <a href="#popNewCard">Создать новую задачу</a>
+                            <Link to="/card/add" style={{ color: 'white', textDecoration: 'none' }}>
+                                Создать новую задачу
+                            </Link>
                         </NewTaskButton>
 
                         <UserButton
@@ -52,8 +55,8 @@ export function Header() {
                                     <p>Темная тема</p>
                                     <input type="checkbox" className="checkbox" name="checkbox" />
                                 </ThemeToggle>
-                                <ExitButton>
-                                    <a href="#popExit">Выйти</a>
+                                <ExitButton id="btnMainExit">
+                                    <Link to="/exit">Выйти</Link>
                                 </ExitButton>
                             </UserMenu>
                         )}

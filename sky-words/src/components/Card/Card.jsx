@@ -1,6 +1,7 @@
-import { CardItem, CardWrapper, CardGroup, CardTheme, CardButton, CardContent, CardTitle, CardDate } from './Card.styled';
+import { CardItem, CardWrapper, CardGroup, CardTheme, CardContent, CardTitle, CardDate } from './Card.styled';
+import { Link } from 'react-router-dom';
 
-export function Card({ theme, title, date }) {
+export function Card({ id, theme, title, date }) {
     return (
         <CardItem>
             <CardWrapper>
@@ -8,18 +9,11 @@ export function Card({ theme, title, date }) {
                     <CardTheme theme={theme}>
                         {theme === 'orange' ? 'Web Design' : theme === 'green' ? 'Research' : 'Copywriting'}
                     </CardTheme>
-                    <a href="#popBrowse" target="_self">
-                        <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </CardButton>
-                    </a>
                 </CardGroup>
                 <CardContent>
-                    <a href="" target="_blank">
+                    <Link to={`/card/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <CardTitle>{title}</CardTitle>
-                    </a>
+                    </Link>
                     <CardDate>
                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#calendar-clip)">
