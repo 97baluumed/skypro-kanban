@@ -1,6 +1,11 @@
 import styled from 'styled-components';
-import { cardAnimation } from '../../styles/GlobalStyles';
+import { cardAnimation, pulse } from '../../styles/GlobalStyles';
 
+export const Skeleton = styled.div`
+  background: #eaeef6;
+  border-radius: 8px;
+  animation: ${pulse} 1.6s infinite ease-in-out;
+`;
 export const CardItem = styled.div`
   animation: ${cardAnimation} 500ms linear;
 `;

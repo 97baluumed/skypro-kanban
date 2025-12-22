@@ -1,4 +1,4 @@
-import { CardItem, CardWrapper, CardGroup, CardTheme, CardContent, CardTitle, CardDate } from './Card.styled';
+import { CardItem, CardWrapper, CardGroup, CardTheme, CardContent, CardTitle, CardDate, Skeleton, CardButton } from './Card.styled';
 import { Link } from 'react-router-dom';
 
 export function Card({ id, theme, title, date }) {
@@ -9,6 +9,11 @@ export function Card({ id, theme, title, date }) {
                     <CardTheme theme={theme}>
                         {theme === 'orange' ? 'Web Design' : theme === 'green' ? 'Research' : 'Copywriting'}
                     </CardTheme>
+                    <CardButton>
+                        <Skeleton></Skeleton>
+                        <Skeleton></Skeleton>
+                        <Skeleton></Skeleton>
+                    </CardButton>
                 </CardGroup>
                 <CardContent>
                     <Link to={`/card/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
