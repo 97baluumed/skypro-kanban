@@ -1,18 +1,7 @@
-import './App.css';
-import { Header } from './components/Header/Header';
-import { Main } from './components/Main/Main';
-import { PopNewCard } from './components/PopNewCard/PopNewCard';
-import { PopBrowse } from './components/PopBrowse/PopBrowse';
+import AppRoutes from './pages/AppRoutes';
 
-export default function App() {
-  return (
-    <>
-      <div className="wrapper">
-        <PopNewCard />
-        <PopBrowse />
-        <Header />
-        <Main />
-      </div>
-    </>
-  );
+function App() {
+  return <AppRoutes />
 }
+
+export default App;

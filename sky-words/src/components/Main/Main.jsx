@@ -26,7 +26,7 @@ export function Main() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setLoading(false);
-        }, 1800);
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
 
@@ -49,6 +49,7 @@ export function Main() {
                             {groupedCards[status]?.map((card) => (
                                 <Card
                                     key={card.id}
+                                    id={card.id}
                                     theme={card.topic === 'Web Design' ? 'orange' : card.topic === 'Research' ? 'green' : 'purple'}
                                     title={card.title}
                                     date={card.date}
