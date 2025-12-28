@@ -21,6 +21,7 @@ import {
   GroupeTextCalendar,
   ButtonBlock
 } from './NewCardPage.styled'
+import { addTask } from '../../../services/api';
 
 
 export default function NewCardPage() {
@@ -28,22 +29,60 @@ export default function NewCardPage() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedDate, setSelectedDate] = useState('30.10.23');
-  const [category, setCategory] = useState('Web Design');
 
-  const handleDateSelect = (dateString) => {
-    setSelectedDate(dateString);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const [selectedDate, setSelectedDate] = useState(`${year}-${month}-${day}`);
+
+  const [category, setCategory] = useState('Web Design');
+  const [error, setError] = useState('');
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '–';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
   };
 
-  const handleCreate = (e) => {
+  const handleDateSelect = (dateString) => {
+    if (!dateString || typeof dateString !== 'string') return;
+
+    const match = dateString.match(/^(\d{2})\.(\d{2})\.(\d{2,4})$/);
+    if (!match) return;
+
+    const [_, day, month, yearRaw] = match;
+    const year = yearRaw.length === 2 ? `20${yearRaw}` : yearRaw;
+    const formatted = `${year}-${month}-${day}`;
+    setSelectedDate(formatted);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    console.log('Новая задача:', { title, description, category, date: selectedDate });
+    try {
+      await addTask({
+        token: localStorage.getItem('token'),
+        task: {
+          title,
+          description,
+          topic: category,
+          status: 'Без статуса',
+          date: selectedDate,
+        },
+      });
 
-    navigate(-1);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
   };
-
   const categories = [
     { name: 'Web Design', theme: 'orange' },
     { name: 'Research', theme: 'green' },
@@ -55,7 +94,8 @@ export default function NewCardPage() {
       <Block>
         <CloseButton onClick={() => navigate(-1)}>&#10006;</CloseButton>
         <Title>Создание задачи</Title>
-        <Form onSubmit={handleCreate}>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <Form onSubmit={handleSubmit}>
           <GroupeTextCalendar>
             <GroupeText>
               <InputBlock>
@@ -79,7 +119,7 @@ export default function NewCardPage() {
             </GroupeText>
             <CalendarWrapper>
               <Calendar
-                selectedDate={selectedDate}
+                selectedDate={formatDate(selectedDate)}
                 periodText="Срок исполнения:"
                 onDateSelect={handleDateSelect}
               />
