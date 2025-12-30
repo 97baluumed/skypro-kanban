@@ -15,7 +15,25 @@ import {
 } from './Header.styled';
 import { Link } from 'react-router-dom';
 
+function getInitialUser() {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+        try {
+            const parsed = JSON.parse(savedUser);
+            return {
+                name: parsed.name || 'Имя не указано',
+                email: parsed.login || parsed.email || '—'
+            };
+        } catch (err) {
+            console.error('❌ Ошибка парсинга user:', err);
+            return { name: 'Ошибка', email: '—' };
+        }
+    }
+    return { name: 'Гость', email: '—' };
+}
+
 export function Header() {
+    const [user] = useState(getInitialUser);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     return (
@@ -44,13 +62,13 @@ export function Header() {
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                             aria-expanded={isUserMenuOpen}
                         >
-                            Ivan Ivanov
+                            {user.name}
                         </UserButton>
 
                         {isUserMenuOpen && (
                             <UserMenu>
-                                <UserName>Ivan Ivanov</UserName>
-                                <UserMail>ivan.ivanov@gmail.com</UserMail>
+                                <UserName>{user.name}</UserName>
+                                <UserMail>{user.email}</UserMail>
                                 <ThemeToggle>
                                     <p>Темная тема</p>
                                     <input type="checkbox" className="checkbox" name="checkbox" />
