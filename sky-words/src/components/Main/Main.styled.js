@@ -6,6 +6,8 @@ export const MainWrapper = styled.main`
   padding-top: 40px;
   padding-left: 135px;
   padding-right: 129px;
+  min-height: calc(100vh - 60px);
+  box-sizing: border-box;
 `;
 
 export const MainContent = styled.div`

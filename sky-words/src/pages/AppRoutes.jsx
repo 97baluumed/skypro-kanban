@@ -10,33 +10,16 @@ import PrivateRoute from './PrivateRoute';
 import NewCardPage from './components/NewCardPage/NewCardPage';
 
 function AppRoutes() {
-    // При обновлении страницы сбрасывает isAuth до false
-    // Если isAuth = false то выбрасывает на форму авторизации
-    // Возможно пригодится в будущем для API
-
-    // const [isAuth, setIsAuth] = useState(false);
-
-    // const handleLogin = () => setIsAuth(true);
-    // const handleLogout = () => setIsAuth(false);
-
-
-    // Сохраняет isAuth при обновлении
-    // Для выхода из аккаунта приходится вручную выходить из акк
-    // Не совсем совпадает с тем, что было в теории 
-
     const [isAuth, setIsAuth] = useState(() => {
-        const saved = localStorage.getItem('isAuth');
-        return saved === 'true';
+        return !!localStorage.getItem('token');
     });
 
     const handleLogin = () => {
         setIsAuth(true);
-        localStorage.setItem('isAuth', 'true');
     };
 
     const handleLogout = () => {
         setIsAuth(false);
-        localStorage.removeItem('isAuth');
     };
 
     return (

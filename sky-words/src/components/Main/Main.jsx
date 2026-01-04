@@ -1,16 +1,7 @@
-import { useState, useEffect } from 'react';
 import { Column } from '../Column/Column';
 import { Card } from '../Card/Card';
 import { LoadingCard } from '../LoadingCard/LoadingCard';
-import { cardsData } from '../../data';
 import { MainWrapper, MainContent } from './Main.styled';
-
-const groupedCards = cardsData.reduce((acc, card) => {
-    const status = card.status;
-    if (!acc[status]) acc[status] = [];
-    acc[status].push(card);
-    return acc;
-}, {});
 
 const statuses = [
     'Без статуса',
@@ -20,22 +11,29 @@ const statuses = [
     'Готово',
 ];
 
-export function Main() {
-    const [loading, setLoading] = useState(true);
+export function Main({ loading, error, tasks = [] }) {
+    const groupedTasks = tasks.reduce((acc, task) => {
+        const status = task.status || 'Без статуса';
+        if (!acc[status]) acc[status] = [];
+        acc[status].push(task);
+        return acc;
+    }, {});
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-        return () => clearTimeout(timer);
-    }, []);
+    if (error) {
+        return (
+            <div style={{ color: 'red', padding: '20px', textAlign: 'center' }}>
+                {error}
+            </div>
+        );
+    }
 
     return (
         <MainWrapper>
             <MainContent>
                 {loading
-                    ? statuses.map((status) => {
-                        const count = groupedCards[status]?.length || 0;
+                    ?
+                    statuses.map((status) => {
+                        const count = groupedTasks[status]?.length || 1;
                         return (
                             <Column key={status} title={status}>
                                 {Array.from({ length: count }).map((_, index) => (
@@ -44,17 +42,22 @@ export function Main() {
                             </Column>
                         );
                     })
-                    : statuses.map((status) => (
+                    :
+                    statuses.map((status) => (
                         <Column key={status} title={status}>
-                            {groupedCards[status]?.map((card) => (
+                            {groupedTasks[status]?.map((task) => (
                                 <Card
-                                    key={card.id}
-                                    id={card.id}
-                                    theme={card.topic === 'Web Design' ? 'orange' : card.topic === 'Research' ? 'green' : 'purple'}
-                                    title={card.title}
-                                    date={card.date}
+                                    key={task._id}
+                                    id={task._id}
+                                    title={task.title}
+                                    date={new Date(task.date).toLocaleDateString('ru-RU')}
+                                    theme={
+                                        task.topic === 'Web Design' ? 'orange' :
+                                            task.topic === 'Research' ? 'green' : 'purple'
+                                    }
                                 />
                             ))}
+                            {!groupedTasks[status] && !loading && <p>Нет задач</p>}
                         </Column>
                     ))}
             </MainContent>

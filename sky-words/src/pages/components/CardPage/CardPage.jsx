@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cardsData } from '../../../data';
+import { fetchTaskById, editTask, deleteTask } from '../../../services/api';
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
   Overlay,
@@ -17,58 +17,224 @@ import {
   Button,
   CloseButton,
   GroupTextDate,
-  ContentBlock
-} from './CardPage.styled'
+  ContentBlock,
+  LoadingOverlay,
+  LoadingText,
+  EditableTitle,
+  StatusButton,
+  StatusList
+} from './CardPage.styled';
 
 export default function CardPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [card, setCard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-  const card = cardsData.find(c => c.id === Number(id));
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '–';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+  };
 
   useEffect(() => {
-    if (!card) {
-      navigate('/not-found', { replace: true });
-    }
-  }, [card, navigate]);
+    const loadCard = async () => {
+      try {
+        const data = await fetchTaskById({
+          token: localStorage.getItem('token'),
+          id,
+        });
+        setCard(data);
+      } catch (err) {
+        console.error('❌ Ошибка загрузки карточки:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!card) {
-    return null;
+    loadCard();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <LoadingOverlay>
+        <LoadingText>Загрузка...</LoadingText>
+      </LoadingOverlay>
+    );
   }
+  if (error) return (
+    <div style={{ color: 'red', padding: '20px' }}>
+      Ошибка: {error}
+      <br />
+      <button onClick={() => navigate(-1)}>Назад</button>
+    </div>
+  );
+  if (!card) return null;
 
   const themeType = card.topic === 'Web Design' ? 'orange' :
     card.topic === 'Research' ? 'green' : 'purple';
+
+  const handleSave = async () => {
+    try {
+      await editTask({
+        token: localStorage.getItem('token'),
+        id: card._id,
+        task: {
+          title: card.title,
+          description: card.description,
+          topic: card.topic,
+          status: card.status,
+          date: new Date(card.date).toISOString(),
+        },
+      });
+      setIsEditing(false);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteTask({
+        token: localStorage.getItem('token'),
+        id: card._id,
+      });
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleDateSelect = (dateString) => {
+    if (!dateString || typeof dateString !== 'string') {
+      console.error('❌ Неверный формат даты:', dateString);
+      return;
+    }
+
+    let date;
+
+    const shortYearRegex = /^(\d{2})\.(\d{2})\.(\d{2})$/;
+    const longYearRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+
+    const shortMatch = dateString.match(shortYearRegex);
+    const longMatch = dateString.match(longYearRegex);
+
+    if (longMatch) {
+      const day = longMatch[1];
+      const month = longMatch[2];
+      const year = longMatch[3];
+      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    } else if (shortMatch) {
+      const day = shortMatch[1];
+      const month = shortMatch[2];
+      const year = '20' + shortMatch[3];
+      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    } else {
+      date = new Date(`${dateString}T00:00:00.000Z`);
+    }
+
+    if (isNaN(date.getTime())) {
+      console.error('❌ Невозможно распознать дату:', dateString);
+      return;
+    }
+
+    setCard({ ...card, date: date.toISOString() });
+  };
+
 
   return (
     <Overlay>
       <ModalBlock>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-          <Title>{card.title}</Title>
+          {isEditing ? (
+            <EditableTitle
+              type="text"
+              value={card.title}
+              onChange={(e) => setCard({ ...card, title: e.target.value })}
+              $editing={isEditing}
+              autoFocus
+            />
+          ) : (
+            <Title>{card.title}</Title>
+          )}
           <ThemeTag $themeType={themeType}>{card.topic}</ThemeTag>
         </div>
         <StatusLabel>Статус</StatusLabel>
-        <StatusValue>{card.status}</StatusValue>
+        {isEditing ? (
+          <StatusList>
+            {['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'].map((status, index) => (
+              <StatusButton
+                key={status}
+                $active={card.status === status}
+                onClick={() => setCard({ ...card, status })}
+                $first={index === 0}
+                $middle={index > 0 && index < 4}
+              >
+                {status}
+              </StatusButton>
+            ))}
+          </StatusList>
+        ) : (
+          <StatusValue>{card.status}</StatusValue>
+        )}
         <GroupTextDate>
           <ContentBlock>
             <StatusText>Описание задачи</StatusText>
             <TextArea
-              defaultValue={card.description || 'Описание отсутствует'}
-              readOnly
+              value={card.description}
+              onChange={(e) => setCard({ ...card, description: e.target.value })}
+              $editing={isEditing}
+              readOnly={!isEditing}
             />
           </ContentBlock>
           <CalendarWrapper>
-            <Calendar
-              selectedDate={card.date}
-              periodText="Срок исполнения:"
-            />
+            {isEditing ? (
+              <Calendar
+                selectedDate={formatDate(card.date)}
+                periodText="Срок исполнения:"
+                onDateSelect={handleDateSelect}
+              />
+            ) : (
+              <Calendar
+                selectedDate={formatDate(card.date)}
+                periodText="Срок исполнения:"
+              />
+            )}
           </CalendarWrapper>
         </GroupTextDate>
         <ButtonGroup>
           <ButtonAction>
-            <Button className="edit">Редактировать задачу</Button>
-            <Button className="delete">Удалить задачу</Button>
+            {!isEditing ? (
+              <Button className="edit" onClick={() => setIsEditing(true)}>
+                Редактировать задачу
+              </Button>
+            ) : (
+              <>
+                <Button className="save" onClick={handleSave}>
+                  Сохранить
+                </Button>
+                <Button
+                  className="cancel"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Отменить
+                </Button>
+              </>
+            )}
+            <Button className="delete" onClick={handleDelete}>
+              Удалить задачу
+            </Button>
           </ButtonAction>
-          <CloseButton onClick={() => window.history.back()}>
+          <CloseButton onClick={() => navigate(-1)}>
             Закрыть
           </CloseButton>
         </ButtonGroup>
