@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchTaskById, editTask, deleteTask } from '../../../services/api';
+import { fetchTaskById } from '../../../services/api';
+import TaskContext from "../../../context/TaskContext";
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
   Overlay,
@@ -32,6 +33,7 @@ export default function CardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const { updateTask, removeTask } = useContext(TaskContext);
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -84,16 +86,12 @@ export default function CardPage() {
 
   const handleSave = async () => {
     try {
-      await editTask({
-        token: localStorage.getItem('token'),
-        id: card._id,
-        task: {
-          title: card.title,
-          description: card.description,
-          topic: card.topic,
-          status: card.status,
-          date: new Date(card.date).toISOString(),
-        },
+      await updateTask(card._id, {
+        title: card.title,
+        description: card.description,
+        topic: card.topic,
+        status: card.status,
+        date: card.date,
       });
       setIsEditing(false);
       navigate('/');
@@ -104,10 +102,7 @@ export default function CardPage() {
 
   const handleDelete = async () => {
     try {
-      await deleteTask({
-        token: localStorage.getItem('token'),
-        id: card._id,
-      });
+      await removeTask(card._id);
       navigate('/');
     } catch (err) {
       setError(err.message);

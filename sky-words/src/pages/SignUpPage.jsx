@@ -14,7 +14,7 @@ import {
     LinkUp
 } from './components/AuthPage/AuthPage.styled';
 
-export default function SignUpPage({ onLogin }) {
+export default function SignUpPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,10 +37,12 @@ export default function SignUpPage({ onLogin }) {
                 password,
             });
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+            // localStorage.setItem('token', data.token);
+            localStorage.setItem('userInfo', JSON.stringify({
+                token: data.user.token,
+                user: data.user
+            }));
 
-            onLogin();
             navigate('/', { replace: true });
         } catch (err) {
             setError(err.message);

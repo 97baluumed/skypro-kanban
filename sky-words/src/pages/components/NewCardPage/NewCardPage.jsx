@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
@@ -20,12 +20,12 @@ import {
   GroupeText,
   GroupeTextCalendar,
   ButtonBlock
-} from './NewCardPage.styled'
-import { addTask } from '../../../services/api';
-
+} from './NewCardPage.styled';
+import TaskContext from '../../../context/TaskContext';
 
 export default function NewCardPage() {
   const navigate = useNavigate();
+  const { addNewTask } = useContext(TaskContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -67,22 +67,19 @@ export default function NewCardPage() {
     if (!title.trim()) return;
 
     try {
-      await addTask({
-        token: localStorage.getItem('token'),
-        task: {
-          title,
-          description,
-          topic: category,
-          status: 'Без статуса',
-          date: selectedDate,
-        },
+      await addNewTask({
+        title,
+        description,
+        topic: category,
+        status: 'Без статуса',
+        date: selectedDate,
       });
-
       navigate('/');
     } catch (err) {
       setError(err.message);
     }
   };
+
   const categories = [
     { name: 'Web Design', theme: 'orange' },
     { name: 'Research', theme: 'green' },
@@ -145,6 +142,6 @@ export default function NewCardPage() {
           </ButtonBlock>
         </Form>
       </Block>
-    </Modal >
+    </Modal>
   );
 }

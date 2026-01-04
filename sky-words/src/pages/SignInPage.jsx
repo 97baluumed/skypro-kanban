@@ -14,7 +14,7 @@ import {
     Link
 } from './components/AuthPage/AuthPage.styled';
 
-export default function SignInPage({ onLogin }) {
+export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -40,10 +40,12 @@ export default function SignInPage({ onLogin }) {
                 throw new Error('Не удалось авторизоваться. Проверьте логин и пароль.');
             }
 
-            localStorage.setItem('token', data.user.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+            // localStorage.setItem('token', data.user.token);
+            localStorage.setItem('userInfo', JSON.stringify({
+                token: data.user.token,
+                user: data.user
+            }));
 
-            onLogin();
             navigate('/', { replace: true });
         } catch (err) {
             console.error('❌ Ошибка входа:', err);
