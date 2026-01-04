@@ -1,16 +1,25 @@
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExitWrapper, ExitBlock, Title, ButtonGroup, Button } from './ExitPage.styled';
+import { AuthContext } from '../../../context/AuthContext';
+import {
+  ExitWrapper,
+  ExitBlock,
+  Title,
+  ButtonGroup,
+  Button,
+} from './ExitPage.styled';
 
-export default function ExitPage({ onConfirm }) {
+export default function ExitPage() {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-
-    onConfirm();
-
+  const handleConfirm = () => {
+    logout();
     navigate('/login', { replace: true });
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
   };
 
   return (
@@ -18,8 +27,12 @@ export default function ExitPage({ onConfirm }) {
       <ExitBlock>
         <Title>Выйти из аккаунта?</Title>
         <ButtonGroup>
-          <Button className="yes" onClick={handleLogout}>Да, выйти</Button>
-          <Button className="no" onClick={() => navigate(-1)}>Нет, остаться</Button>
+          <Button className="yes" onClick={handleConfirm}>
+            Да, выйти
+          </Button>
+          <Button className="no" onClick={handleCancel}>
+            Нет, остаться
+          </Button>
         </ButtonGroup>
       </ExitBlock>
     </ExitWrapper>

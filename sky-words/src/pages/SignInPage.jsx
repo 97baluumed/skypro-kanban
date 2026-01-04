@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '../services/auth';
 import {
@@ -13,12 +13,15 @@ import {
     LinkText,
     Link
 } from './components/AuthPage/AuthPage.styled';
+import { AuthContext } from '../context/AuthContext';
 
 export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const { updateUserInfo } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,10 +44,10 @@ export default function SignInPage() {
             }
 
             // localStorage.setItem('token', data.user.token);
-            localStorage.setItem('userInfo', JSON.stringify({
+            updateUserInfo({
                 token: data.user.token,
                 user: data.user
-            }));
+            });
 
             navigate('/', { replace: true });
         } catch (err) {

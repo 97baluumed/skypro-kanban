@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     HeaderWrapper,
     Container,
@@ -16,16 +16,16 @@ import {
 import { Link } from 'react-router-dom';
 
 function getInitialUser() {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    const savedUserInfo = localStorage.getItem('userInfo');
+    if (savedUserInfo) {
         try {
-            const parsed = JSON.parse(savedUser);
+            const parsed = JSON.parse(savedUserInfo);
             return {
-                name: parsed.name || 'Имя не указано',
-                email: parsed.login || parsed.email || '—'
+                name: parsed.user?.name || 'Имя не указано',
+                email: parsed.user?.login || parsed.user?.email || '—'
             };
         } catch (err) {
-            console.error('❌ Ошибка парсинга user:', err);
+            console.error('❌ Ошибка парсинга userInfo:', err);
             return { name: 'Ошибка', email: '—' };
         }
     }
@@ -33,8 +33,17 @@ function getInitialUser() {
 }
 
 export function Header() {
-    const [user] = useState(getInitialUser);
+    const [user, setUser] = useState(getInitialUser); // ✅ Теперь setUser доступен
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setUser(getInitialUser()); // ✅ Теперь работает
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
 
     return (
         <HeaderWrapper>
