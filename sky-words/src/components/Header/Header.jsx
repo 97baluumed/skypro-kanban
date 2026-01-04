@@ -33,12 +33,12 @@ function getInitialUser() {
 }
 
 export function Header() {
-    const [user, setUser] = useState(getInitialUser); // ✅ Теперь setUser доступен
+    const [user, setUser] = useState(getInitialUser);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleStorageChange = () => {
-            setUser(getInitialUser()); // ✅ Теперь работает
+            setUser(getInitialUser());
         };
 
         window.addEventListener('storage', handleStorageChange);

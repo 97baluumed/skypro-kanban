@@ -25,9 +25,9 @@ export const TaskProvider = ({ children }) => {
 
     const addNewTask = async (taskData) => {
         try {
-            const newTasks = await addTask({ token: user?.token, task: taskData });
-            setTasks(newTasks);
-            return newTasks;
+            const newTask = await addTask({ token: user?.token, task: taskData });
+            setTasks((prev) => [...prev, newTask]);
+            return newTask;
         } catch (err) {
             setError(err.message);
             console.error('Ошибка добавления задачи:', err);
@@ -37,9 +37,11 @@ export const TaskProvider = ({ children }) => {
 
     const updateTask = async (id, taskData) => {
         try {
-            const newTasks = await editTask({ token: user?.token, id, task: taskData });
-            setTasks(newTasks);
-            return newTasks;
+            const updatedTask = await editTask({ token: user?.token, id, task: taskData });
+            setTasks((prev) =>
+                prev.map((task) => (task._id === id ? updatedTask : task))
+            );
+            return updatedTask;
         } catch (err) {
             setError(err.message);
             console.error('Ошибка редактирования задачи:', err);
@@ -49,8 +51,8 @@ export const TaskProvider = ({ children }) => {
 
     const removeTask = async (id) => {
         try {
-            const newTasks = await deleteTask({ token: user?.token, id });
-            setTasks(newTasks);
+            await deleteTask({ token: user?.token, id });
+            setTasks((prev) => prev.filter((task) => task._id !== id));
         } catch (err) {
             setError(err.message);
             console.error('Ошибка удаления задачи:', err);
@@ -77,4 +79,6 @@ export const TaskProvider = ({ children }) => {
             {children}
         </TaskContext.Provider>
     );
+
 };
+

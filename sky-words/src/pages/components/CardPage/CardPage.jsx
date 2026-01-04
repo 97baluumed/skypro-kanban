@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchTaskById } from '../../../services/api';
-import TaskContext from "../../../context/TaskContext";
+import { AuthContext } from '../../../context/AuthContext';
+import TaskContext from '../../../context/TaskContext';
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
   Overlay,
@@ -33,16 +34,16 @@ export default function CardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+
+  const { user } = useContext(AuthContext);
   const { updateTask, removeTask } = useContext(TaskContext);
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return '–';
-
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-
     return `${day}.${month}.${year}`;
   };
 
@@ -50,7 +51,7 @@ export default function CardPage() {
     const loadCard = async () => {
       try {
         const data = await fetchTaskById({
-          token: localStorage.getItem('token'),
+          token: user?.token,
           id,
         });
         setCard(data);
@@ -62,8 +63,10 @@ export default function CardPage() {
       }
     };
 
-    loadCard();
-  }, [id]);
+    if (id) {
+      loadCard();
+    }
+  }, [id, user?.token]);
 
   if (loading) {
     return (
@@ -72,13 +75,19 @@ export default function CardPage() {
       </LoadingOverlay>
     );
   }
-  if (error) return (
-    <div style={{ color: 'red', padding: '20px' }}>
-      Ошибка: {error}
-      <br />
-      <button onClick={() => navigate(-1)}>Назад</button>
-    </div>
-  );
+
+  if (error) {
+    return (
+      <div style={{ color: 'red', padding: '20px', textAlign: 'center' }}>
+        Ошибка: {error}
+        <br />
+        <button onClick={() => navigate(-1)} style={{ marginTop: '10px' }}>
+          Назад
+        </button>
+      </div>
+    );
+  }
+
   if (!card) return null;
 
   const themeType = card.topic === 'Web Design' ? 'orange' :
@@ -110,41 +119,15 @@ export default function CardPage() {
   };
 
   const handleDateSelect = (dateString) => {
-    if (!dateString || typeof dateString !== 'string') {
-      console.error('❌ Неверный формат даты:', dateString);
-      return;
-    }
+    if (!dateString || typeof dateString !== 'string') return;
 
-    let date;
+    const match = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if (!match) return;
 
-    const shortYearRegex = /^(\d{2})\.(\d{2})\.(\d{2})$/;
-    const longYearRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
-
-    const shortMatch = dateString.match(shortYearRegex);
-    const longMatch = dateString.match(longYearRegex);
-
-    if (longMatch) {
-      const day = longMatch[1];
-      const month = longMatch[2];
-      const year = longMatch[3];
-      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    } else if (shortMatch) {
-      const day = shortMatch[1];
-      const month = shortMatch[2];
-      const year = '20' + shortMatch[3];
-      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    } else {
-      date = new Date(`${dateString}T00:00:00.000Z`);
-    }
-
-    if (isNaN(date.getTime())) {
-      console.error('❌ Невозможно распознать дату:', dateString);
-      return;
-    }
-
-    setCard({ ...card, date: date.toISOString() });
+    const [_, day, month, year] = match;
+    const formatted = `${year}-${month}-${day}`;
+    setCard({ ...card, date: formatted });
   };
-
 
   return (
     <Overlay>
@@ -166,13 +149,11 @@ export default function CardPage() {
         <StatusLabel>Статус</StatusLabel>
         {isEditing ? (
           <StatusList>
-            {['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'].map((status, index) => (
+            {['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'].map((status) => (
               <StatusButton
                 key={status}
                 $active={card.status === status}
                 onClick={() => setCard({ ...card, status })}
-                $first={index === 0}
-                $middle={index > 0 && index < 4}
               >
                 {status}
               </StatusButton>
@@ -217,10 +198,7 @@ export default function CardPage() {
                 <Button className="save" onClick={handleSave}>
                   Сохранить
                 </Button>
-                <Button
-                  className="cancel"
-                  onClick={() => setIsEditing(false)}
-                >
+                <Button className="cancel" onClick={() => setIsEditing(false)}>
                   Отменить
                 </Button>
               </>
