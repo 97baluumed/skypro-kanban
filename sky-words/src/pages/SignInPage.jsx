@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '../services/auth';
 import {
@@ -13,41 +13,69 @@ import {
     LinkText,
     Link
 } from './components/AuthPage/AuthPage.styled';
+import { AuthContext } from '../context/AuthContext';
 
-export default function SignInPage({ onLogin }) {
+export default function SignInPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const { updateUserInfo } = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setError('');
+
+    //     if (!email || !password) {
+    //         setError('Заполните все поля');
+    //         return;
+    //     }
+
+    //     try {
+    //         const data = await signIn({
+    //             login: email,
+    //             password,
+    //         });
+
+    //         if (!data.user || !data.user.token) {
+    //             console.error('❌ Токен не найден:', data);
+    //             throw new Error('Не удалось авторизоваться. Проверьте логин и пароль.');
+    //         }
+
+    //         updateUserInfo({
+    //             token: data.user.token,
+    //             user: data.user
+    //         });
+
+    //         navigate('/', { replace: true });
+    //     } catch (err) {
+    //         console.error('❌ Ошибка входа:', err);
+    //         setError(err.message);
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
         setError('');
 
         if (!email || !password) {
             setError('Заполните все поля');
+            setIsLoading(false);
             return;
         }
 
         try {
-            const data = await signIn({
-                login: email,
-                password,
-            });
-
-            if (!data.user || !data.user.token) {
-                console.error('❌ Токен не найден:', data);
-                throw new Error('Не удалось авторизоваться. Проверьте логин и пароль.');
-            }
-
-            localStorage.setItem('token', data.user.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-
-            onLogin();
+            const data = await signIn({ login: email, password });
+            updateUserInfo({ token: data.user.token, user: data.user });
             navigate('/', { replace: true });
         } catch (err) {
-            console.error('❌ Ошибка входа:', err);
             setError(err.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -55,8 +83,8 @@ export default function SignInPage({ onLogin }) {
         <AuthWrapper>
             <Modal>
                 <Title>Вход</Title>
-                {error && <ErrorMessage>{error}</ErrorMessage>}
                 <Form onSubmit={handleSubmit}>
+                    {error && <ErrorMessage $visible={!!error}>{error}</ErrorMessage>}
                     <InputWrapper>
                         <Input
                             type="email"
@@ -74,7 +102,9 @@ export default function SignInPage({ onLogin }) {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </InputWrapper>
-                    <Button type="submit">Войти</Button>
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Вход...' : 'Войти'}
+                    </Button>
                 </Form>
                 <LinkText>
                     Нужно зарегистрироваться? <Link href="/register">Регистрируйтесь здесь</Link>
