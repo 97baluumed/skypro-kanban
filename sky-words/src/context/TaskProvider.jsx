@@ -37,14 +37,16 @@ export const TaskProvider = ({ children }) => {
 
     const updateTask = async (id, taskData) => {
         try {
-            const updatedTask = await editTask({ token: user?.token, id, task: taskData });
-            setTasks((prev) =>
-                prev.map((task) => (task._id === id ? updatedTask : task))
-            );
-            return updatedTask;
+            await editTask({ token: user?.token, id, task: taskData });
+
+            setTasks((prev) => {
+                const updated = prev.map((task) => (task._id === id ? { ...task, ...taskData } : task));
+                return updated;
+            });
+
+            return { ...tasks.find(t => t._id === id), ...taskData };
         } catch (err) {
             setError(err.message);
-            console.error('Ошибка редактирования задачи:', err);
             throw err;
         }
     };

@@ -38,6 +38,7 @@ export default function NewCardPage() {
 
   const [category, setCategory] = useState('Web Design');
   const [error, setError] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -64,19 +65,17 @@ export default function NewCardPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (isCreating) return;
+    setIsCreating(true);
+    setError('');
 
     try {
-      await addNewTask({
-        title,
-        description,
-        topic: category,
-        status: 'Без статуса',
-        date: selectedDate,
-      });
+      await addNewTask({ title, description, topic: category, status: 'Без статуса', date: selectedDate });
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -138,7 +137,9 @@ export default function NewCardPage() {
             </CategoriesList>
           </CategoriesBlock>
           <ButtonBlock>
-            <CreateButton type="submit">Создать задачу</CreateButton>
+            <CreateButton type="submit" disabled={isCreating}>
+              {isCreating ? 'Создание...' : 'Создать задачу'}
+            </CreateButton>
           </ButtonBlock>
         </Form>
       </Block>

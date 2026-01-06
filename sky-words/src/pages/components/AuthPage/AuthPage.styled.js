@@ -41,6 +41,7 @@ export const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 7px;
+    position: relative;
 `;
 export const InputWrapper = styled.div`
     position: relative;
@@ -90,10 +91,22 @@ export const Button = styled.button`
   }
 `;
 export const ErrorMessage = styled.p`
-    color: #ff0000;
-    font-size: 14px;
-    margin: 8px 0 0;
-    text-align: center;
+  position: absolute;
+  top: -22px;
+  left: 0;
+  right: 0;
+  color: #ff0000;
+  font-size: 14px;
+  text-align: center;
+  background: #fff;
+  padding: 2px 0;
+  border-radius: 4px;
+  box-shadow: none;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: all 0.2s ease;
+  pointer-events: none;
+  height: 14px;
 `;
 export const LinkText = styled.p`
     color: rgba(148, 166, 190, 0.4);

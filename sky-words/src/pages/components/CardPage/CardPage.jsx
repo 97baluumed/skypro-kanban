@@ -38,6 +38,9 @@ export default function CardPage() {
   const { user } = useContext(AuthContext);
   const { updateTask, removeTask } = useContext(TaskContext);
 
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return '–';
@@ -49,23 +52,20 @@ export default function CardPage() {
 
   useEffect(() => {
     const loadCard = async () => {
+      if (!id || !user?.token) return;
+
       try {
-        const data = await fetchTaskById({
-          token: user?.token,
-          id,
-        });
+        setLoading(true);
+        const data = await fetchTaskById({ token: user.token, id });
         setCard(data);
       } catch (err) {
-        console.error('❌ Ошибка загрузки карточки:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      loadCard();
-    }
+    loadCard();
   }, [id, user?.token]);
 
   if (loading) {
@@ -94,6 +94,8 @@ export default function CardPage() {
     card.topic === 'Research' ? 'green' : 'purple';
 
   const handleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       await updateTask(card._id, {
         title: card.title,
@@ -102,19 +104,29 @@ export default function CardPage() {
         status: card.status,
         date: card.date,
       });
+
+      const freshCard = await fetchTaskById({ token: user.token, id: card._id });
+
+      setCard(freshCard);
       setIsEditing(false);
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
+    if (isDeleting) return;
+    setIsDeleting(true);
     try {
       await removeTask(card._id);
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -195,16 +207,16 @@ export default function CardPage() {
               </Button>
             ) : (
               <>
-                <Button className="save" onClick={handleSave}>
-                  Сохранить
+                <Button className="save" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? 'Сохранение...' : 'Сохранить'}
                 </Button>
                 <Button className="cancel" onClick={() => setIsEditing(false)}>
                   Отменить
                 </Button>
               </>
             )}
-            <Button className="delete" onClick={handleDelete}>
-              Удалить задачу
+            <Button className="delete" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? 'Удаление...' : 'Удалить задачу'}
             </Button>
           </ButtonAction>
           <CloseButton onClick={() => navigate(-1)}>

@@ -1,18 +1,8 @@
-import { Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useContext } from 'react';
+import { Outlet } from 'react-router-dom';
 import { Main } from '../components/Main/Main';
 import { Header } from '../components/Header/Header';
-import TaskContext from '../context/TaskContext';
 
 export default function MainPage() {
-    const { loadTasks } = useContext(TaskContext);
-    const location = useLocation();
-
-    useEffect(() => {
-        if (location.pathname === '/') {
-            loadTasks();
-        }
-    }, [location.pathname, loadTasks]);
 
     return (
         <>
