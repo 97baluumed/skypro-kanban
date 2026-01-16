@@ -10,6 +10,7 @@ export const CardItem = styled.div`
   animation: ${cardAnimation} 500ms linear;
 `;
 export const CardWrapper = styled.div`
+position: relative;
   width: 220px;
   height: 130px;
   border-radius: 10px;
@@ -85,4 +86,35 @@ export const CardDate = styled.div`
   font-size: 10px;
   line-height: 13px;
   letter-spacing: 0.2px;
+`;
+export const Menu = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  transform: translateY(-4px);
+  background: #ffffff;
+  border: 1px solid #d4dbe5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 10;
+  min-width: 180px;
+  font-family: Roboto;
+  font-size: 14px;
+  color: #000000;
+`;
+
+export const MenuItem = styled.div`
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #565eef;
+    color: white;
+  }
+
+  &:first-child {
+    border-bottom: 1px solid #d4dbe5;
+  }
 `;

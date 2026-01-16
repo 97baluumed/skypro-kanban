@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
-import { fetchTasks, addTask, editTask, deleteTask } from '../services/api';
+import { fetchTasks, addTask, editTask, deleteTask, fetchTaskById } from '../services/api';
 import { AuthContext } from './AuthContext';
 import TaskContext from './TaskContext';
 
@@ -48,8 +48,8 @@ export const TaskProvider = ({ children }) => {
 
     const updateTask = async (id, taskData) => {
         try {
-            const response = await editTask({ token: user?.token, id, task: taskData });
-            const updatedTask = response.task;
+            await editTask({ token: user?.token, id, task: taskData });
+            const updatedTask = await fetchTaskById({ token: user?.token, id });
 
             setTasks((prev) => prev.map((task) => (task._id === id ? updatedTask : task)));
             return updatedTask;
