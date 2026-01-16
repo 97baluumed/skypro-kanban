@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
@@ -20,12 +20,12 @@ import {
   GroupeText,
   GroupeTextCalendar,
   ButtonBlock
-} from './NewCardPage.styled'
-import { addTask } from '../../../services/api';
-
+} from './NewCardPage.styled';
+import TaskContext from '../../../context/TaskContext';
 
 export default function NewCardPage() {
   const navigate = useNavigate();
+  const { addNewTask } = useContext(TaskContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -38,6 +38,7 @@ export default function NewCardPage() {
 
   const [category, setCategory] = useState('Web Design');
   const [error, setError] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -64,25 +65,20 @@ export default function NewCardPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (isCreating) return;
+    setIsCreating(true);
+    setError('');
 
     try {
-      await addTask({
-        token: localStorage.getItem('token'),
-        task: {
-          title,
-          description,
-          topic: category,
-          status: 'Без статуса',
-          date: selectedDate,
-        },
-      });
-
+      await addNewTask({ title, description, topic: category, status: 'Без статуса', date: selectedDate });
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsCreating(false);
     }
   };
+
   const categories = [
     { name: 'Web Design', theme: 'orange' },
     { name: 'Research', theme: 'green' },
@@ -141,10 +137,12 @@ export default function NewCardPage() {
             </CategoriesList>
           </CategoriesBlock>
           <ButtonBlock>
-            <CreateButton type="submit">Создать задачу</CreateButton>
+            <CreateButton type="submit" disabled={isCreating}>
+              {isCreating ? 'Создание...' : 'Создать задачу'}
+            </CreateButton>
           </ButtonBlock>
         </Form>
       </Block>
-    </Modal >
+    </Modal>
   );
 }

@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchTaskById, editTask, deleteTask } from '../../../services/api';
+import { fetchTaskById } from '../../../services/api';
+import { AuthContext } from '../../../context/AuthContext';
+import TaskContext from '../../../context/TaskContext';
 import { Calendar } from '../../../components/Calendar/Calendar';
 import {
   Overlay,
@@ -33,27 +35,30 @@ export default function CardPage() {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
+  const { user } = useContext(AuthContext);
+  const { updateTask, removeTask } = useContext(TaskContext);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return '–';
-
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-
     return `${day}.${month}.${year}`;
   };
 
   useEffect(() => {
     const loadCard = async () => {
+      if (!id || !user?.token) return;
+
       try {
-        const data = await fetchTaskById({
-          token: localStorage.getItem('token'),
-          id,
-        });
+        setLoading(true);
+        const data = await fetchTaskById({ token: user.token, id });
         setCard(data);
       } catch (err) {
-        console.error('❌ Ошибка загрузки карточки:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -61,7 +66,7 @@ export default function CardPage() {
     };
 
     loadCard();
-  }, [id]);
+  }, [id, user?.token]);
 
   if (loading) {
     return (
@@ -70,86 +75,71 @@ export default function CardPage() {
       </LoadingOverlay>
     );
   }
-  if (error) return (
-    <div style={{ color: 'red', padding: '20px' }}>
-      Ошибка: {error}
-      <br />
-      <button onClick={() => navigate(-1)}>Назад</button>
-    </div>
-  );
+
+  if (error) {
+    return (
+      <div style={{ color: 'red', padding: '20px', textAlign: 'center' }}>
+        Ошибка: {error}
+        <br />
+        <button onClick={() => navigate(-1)} style={{ marginTop: '10px' }}>
+          Назад
+        </button>
+      </div>
+    );
+  }
+
   if (!card) return null;
 
   const themeType = card.topic === 'Web Design' ? 'orange' :
     card.topic === 'Research' ? 'green' : 'purple';
 
   const handleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
     try {
-      await editTask({
-        token: localStorage.getItem('token'),
-        id: card._id,
-        task: {
-          title: card.title,
-          description: card.description,
-          topic: card.topic,
-          status: card.status,
-          date: new Date(card.date).toISOString(),
-        },
+      await updateTask(card._id, {
+        title: card.title,
+        description: card.description,
+        topic: card.topic,
+        status: card.status,
+        date: card.date,
       });
+
+      const freshCard = await fetchTaskById({ token: user.token, id: card._id });
+
+      setCard(freshCard);
       setIsEditing(false);
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
+    if (isDeleting) return;
+    setIsDeleting(true);
     try {
-      await deleteTask({
-        token: localStorage.getItem('token'),
-        id: card._id,
-      });
+      await removeTask(card._id);
       navigate('/');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleDateSelect = (dateString) => {
-    if (!dateString || typeof dateString !== 'string') {
-      console.error('❌ Неверный формат даты:', dateString);
-      return;
-    }
+    if (!dateString || typeof dateString !== 'string') return;
 
-    let date;
+    const match = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if (!match) return;
 
-    const shortYearRegex = /^(\d{2})\.(\d{2})\.(\d{2})$/;
-    const longYearRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
-
-    const shortMatch = dateString.match(shortYearRegex);
-    const longMatch = dateString.match(longYearRegex);
-
-    if (longMatch) {
-      const day = longMatch[1];
-      const month = longMatch[2];
-      const year = longMatch[3];
-      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    } else if (shortMatch) {
-      const day = shortMatch[1];
-      const month = shortMatch[2];
-      const year = '20' + shortMatch[3];
-      date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    } else {
-      date = new Date(`${dateString}T00:00:00.000Z`);
-    }
-
-    if (isNaN(date.getTime())) {
-      console.error('❌ Невозможно распознать дату:', dateString);
-      return;
-    }
-
-    setCard({ ...card, date: date.toISOString() });
+    const [_, day, month, year] = match;
+    const formatted = `${year}-${month}-${day}`;
+    setCard({ ...card, date: formatted });
   };
-
 
   return (
     <Overlay>
@@ -171,13 +161,11 @@ export default function CardPage() {
         <StatusLabel>Статус</StatusLabel>
         {isEditing ? (
           <StatusList>
-            {['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'].map((status, index) => (
+            {['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'].map((status) => (
               <StatusButton
                 key={status}
                 $active={card.status === status}
                 onClick={() => setCard({ ...card, status })}
-                $first={index === 0}
-                $middle={index > 0 && index < 4}
               >
                 {status}
               </StatusButton>
@@ -219,19 +207,16 @@ export default function CardPage() {
               </Button>
             ) : (
               <>
-                <Button className="save" onClick={handleSave}>
-                  Сохранить
+                <Button className="save" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? 'Сохранение...' : 'Сохранить'}
                 </Button>
-                <Button
-                  className="cancel"
-                  onClick={() => setIsEditing(false)}
-                >
+                <Button className="cancel" onClick={() => setIsEditing(false)}>
                   Отменить
                 </Button>
               </>
             )}
-            <Button className="delete" onClick={handleDelete}>
-              Удалить задачу
+            <Button className="delete" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? 'Удаление...' : 'Удалить задачу'}
             </Button>
           </ButtonAction>
           <CloseButton onClick={() => navigate(-1)}>
