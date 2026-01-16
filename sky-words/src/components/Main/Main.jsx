@@ -17,7 +17,7 @@ export function Main() {
     const { tasks, loading, error } = useContext(TaskContext);
 
     const groupedTasks = tasks.reduce((acc, task) => {
-        const status = task.status || 'Без статуса';
+        const status = task?.status ? task.status.trim() : 'Без статуса';
         if (!acc[status]) acc[status] = [];
         acc[status].push(task);
         return acc;

@@ -366,3 +366,15 @@ export const DateInput = styled.input`
     border: 0;
   }
 `;
+export const ErrorMessage = styled.p`
+  position: relative;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ff0000;
+  text-align: left;
+  height: 12px;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: all 0.2s ease;
+  pointer-events: none;
+`;

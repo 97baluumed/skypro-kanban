@@ -19,16 +19,20 @@ import {
   CreateButton,
   GroupeText,
   GroupeTextCalendar,
-  ButtonBlock
+  ButtonBlock,
+  ErrorMessage
 } from './NewCardPage.styled';
 import TaskContext from '../../../context/TaskContext';
 
+
 export default function NewCardPage() {
   const navigate = useNavigate();
-  const { addNewTask } = useContext(TaskContext);
+  const { addNewTask, loadTasks } = useContext(TaskContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [titleError, setTitleError] = useState('');
+  const [descError, setDescError] = useState('');
 
   const today = new Date();
   const year = today.getFullYear();
@@ -39,6 +43,12 @@ export default function NewCardPage() {
   const [category, setCategory] = useState('Web Design');
   const [error, setError] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+
+  const categories = [
+    { name: 'Web Design', theme: 'orange' },
+    { name: 'Research', theme: 'green' },
+    { name: 'Copywriting', theme: 'purple' }
+  ];
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -63,34 +73,55 @@ export default function NewCardPage() {
     setSelectedDate(formatted);
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isCreating) return;
-    setIsCreating(true);
+
     setError('');
+    setTitleError('');
+    setDescError('');
+
+    const trimmedTitle = title.trim();
+    const trimmedDesc = description.trim();
+
+    if (!trimmedTitle) {
+      setTitleError('Введите название задачи');
+      return;
+    }
+    if (!trimmedDesc) {
+      setDescError('Введите описание задачи');
+      return;
+    }
+
+    setIsCreating(true);
 
     try {
-      await addNewTask({ title, description, topic: category, status: 'Без статуса', date: selectedDate });
+      await addNewTask({
+        title: trimmedTitle,
+        description: trimmedDesc,
+        topic: category,
+        status: 'Без статуса',
+        date: selectedDate,
+      });
+      await loadTasks();
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes('Network')) {
+        setError('Сервер недоступен. Проверьте подключение.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setIsCreating(false);
     }
   };
-
-  const categories = [
-    { name: 'Web Design', theme: 'orange' },
-    { name: 'Research', theme: 'green' },
-    { name: 'Copywriting', theme: 'purple' }
-  ];
 
   return (
     <Modal>
       <Block>
         <CloseButton onClick={() => navigate(-1)}>&#10006;</CloseButton>
         <Title>Создание задачи</Title>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <ErrorMessage $visible>{error}</ErrorMessage>}
         <Form onSubmit={handleSubmit}>
           <GroupeTextCalendar>
             <GroupeText>
@@ -99,18 +130,28 @@ export default function NewCardPage() {
                 <Input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (e.target.value.trim()) setTitleError('');
+                  }}
                   placeholder="Введите название задачи..."
                   autoFocus
                 />
+                {titleError && <ErrorMessage $visible>{titleError}</ErrorMessage>}
+
               </InputBlock>
               <InputBlock>
                 <Label>Описание задачи</Label>
                 <TextArea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (e.target.value.trim()) setDescError('');
+                  }}
                   placeholder="Введите описание задачи..."
                 />
+                {descError && <ErrorMessage $visible>{descError}</ErrorMessage>}
+
               </InputBlock>
             </GroupeText>
             <CalendarWrapper>

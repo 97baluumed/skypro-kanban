@@ -24,7 +24,8 @@ import {
   LoadingText,
   EditableTitle,
   StatusButton,
-  StatusList
+  StatusList,
+  ErrorMessage
 } from './CardPage.styled';
 
 export default function CardPage() {
@@ -95,23 +96,39 @@ export default function CardPage() {
 
   const handleSave = async () => {
     if (isSaving) return;
+
+    const trimmedTitle = card.title.trim();
+    const trimmedDesc = card.description.trim();
+
+    if (!trimmedTitle) {
+      setError('Название задачи не может быть пустым');
+      return;
+    }
+    if (!trimmedDesc) {
+      setError('Описание не может быть пустым');
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateTask(card._id, {
-        title: card.title,
-        description: card.description,
+        title: trimmedTitle,
+        description: trimmedDesc,
         topic: card.topic,
         status: card.status,
         date: card.date,
       });
 
       const freshCard = await fetchTaskById({ token: user.token, id: card._id });
-
       setCard(freshCard);
       setIsEditing(false);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes('Network')) {
+        setError('Не удалось подключиться к серверу');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -143,6 +160,7 @@ export default function CardPage() {
 
   return (
     <Overlay>
+      {error && <ErrorMessage $visible>{error}</ErrorMessage>}
       <ModalBlock>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
           {isEditing ? (

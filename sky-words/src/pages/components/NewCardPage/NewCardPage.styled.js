@@ -128,20 +128,20 @@ export const CategoryTag = styled.div`
   user-select: none;
 
   color: ${props => {
-        if (props.$active) return '#FF6D00';
-        return props.$theme === 'orange' ? '#ee9900' :
-            props.$theme === 'green' ? '#06B16E' :
-                props.$theme === 'purple' ? '#9A48F1' : '#94a6be';
-    }};
+    if (props.$active) return '#FF6D00';
+    return props.$theme === 'orange' ? '#ee9900' :
+      props.$theme === 'green' ? '#06B16E' :
+        props.$theme === 'purple' ? '#9A48F1' : '#94a6be';
+  }};
 
   background: ${props => {
-        if (props.$active) return props.$theme === 'orange' ? '#FFE4C2' :
-            props.$theme === 'green' ? '#06b16e' :
-                props.$theme === 'purple' ? '#9a48f1' : '#94a6be';
-        return props.$theme === 'orange' ? '#ffe4c2' :
-            props.$theme === 'green' ? '#B4FDD1' :
-                props.$theme === 'purple' ? '#E9D4FF' : '#eaeef6';
-    }};
+    if (props.$active) return props.$theme === 'orange' ? '#FFE4C2' :
+      props.$theme === 'green' ? '#06b16e' :
+        props.$theme === 'purple' ? '#9a48f1' : '#94a6be';
+    return props.$theme === 'orange' ? '#ffe4c2' :
+      props.$theme === 'green' ? '#B4FDD1' :
+        props.$theme === 'purple' ? '#E9D4FF' : '#eaeef6';
+  }};
 `;
 export const CreateButton = styled.button`
 
@@ -179,4 +179,16 @@ export const GroupeTextCalendar = styled.div`
 export const ButtonBlock = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+export const ErrorMessage = styled.p`
+  position: relative;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ff0000;
+  text-align: left;
+  height: 12px;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: all 0.2s ease;
+  pointer-events: none;
 `;
