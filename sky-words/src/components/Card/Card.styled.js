@@ -1,13 +1,12 @@
 import styled from 'styled-components';
-import { cardAnimation, pulse } from '../../styles/GlobalStyles';
 
 export const Skeleton = styled.div`
   background: #eaeef6;
   border-radius: 8px;
-  animation: ${pulse} 1.6s infinite ease-in-out;
+  animation: pulse 1.6s infinite ease-in-out;
 `;
 export const CardItem = styled.div`
-  animation: ${cardAnimation} 500ms linear;
+  animation: cardAnimation 500ms linear;
 `;
 export const CardWrapper = styled.div`
 position: relative;
@@ -103,7 +102,6 @@ export const Menu = styled.div`
   font-size: 14px;
   color: #000000;
 `;
-
 export const MenuItem = styled.div`
   padding: 10px 16px;
   cursor: pointer;
