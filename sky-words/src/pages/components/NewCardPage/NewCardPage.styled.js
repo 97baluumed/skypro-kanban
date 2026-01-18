@@ -74,6 +74,7 @@ export const Input = styled.input`
   }
 `;
 export const TextArea = styled.textarea`
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
   width: 100%;
   max-width: 370px;
   min-height: 200px;
