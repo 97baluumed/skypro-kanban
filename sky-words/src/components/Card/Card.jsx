@@ -1,7 +1,36 @@
-import { CardItem, CardWrapper, CardGroup, CardTheme, CardContent, CardTitle, CardDate, Skeleton, CardButton } from './Card.styled';
-import { Link } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CardItem, CardWrapper, CardGroup, CardTheme, CardContent, CardTitle, CardDate, Skeleton, CardButton, Menu, MenuItem } from './Card.styled';
+import TaskContext from '../../context/TaskContext';
 
 export function Card({ id, theme, title, date }) {
+
+    const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
+    const { removeTask } = useContext(TaskContext);
+
+    const handleEdit = () => {
+        setShowMenu(false);
+        navigate(`/card/${id}?edit=true`);
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm('Вы уверены, что хотите удалить задачу?')) return;
+        try {
+            await removeTask(id);
+        } catch (err) {
+            alert('Не удалось удалить задачу: ' + err.message);
+        }
+    };
+
+    useEffect(() => {
+        const handleClickOutside = () => setShowMenu(false);
+        if (showMenu) {
+            document.addEventListener('click', handleClickOutside);
+            return () => document.removeEventListener('click', handleClickOutside);
+        }
+    }, [showMenu]);
+
     return (
         <CardItem>
             <CardWrapper>
@@ -9,12 +38,20 @@ export function Card({ id, theme, title, date }) {
                     <CardTheme theme={theme}>
                         {theme === 'orange' ? 'Web Design' : theme === 'green' ? 'Research' : 'Copywriting'}
                     </CardTheme>
-                    <CardButton>
+                    <CardButton onClick={(e) => { e.stopPropagation(); setShowMenu(prev => !prev); }}>
                         <Skeleton></Skeleton>
                         <Skeleton></Skeleton>
                         <Skeleton></Skeleton>
                     </CardButton>
+
+                    {showMenu && (
+                        <Menu onClick={(e) => e.stopPropagation()}>
+                            <MenuItem onClick={handleEdit}>Редактировать задачу</MenuItem>
+                            <MenuItem onClick={handleDelete}>Удалить задачу</MenuItem>
+                        </Menu>
+                    )}
                 </CardGroup>
+
                 <CardContent>
                     <Link to={`/card/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <CardTitle>{title}</CardTitle>

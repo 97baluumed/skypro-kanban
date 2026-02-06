@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
-import { fetchTasks, addTask, editTask, deleteTask } from '../services/api';
+import { fetchTasks, addTask, editTask, deleteTask, fetchTaskById } from '../services/api';
 import { AuthContext } from './AuthContext';
 import TaskContext from './TaskContext';
 
@@ -25,7 +25,18 @@ export const TaskProvider = ({ children }) => {
 
     const addNewTask = async (taskData) => {
         try {
-            const newTask = await addTask({ token: user?.token, task: taskData });
+            const response = await addTask({ token: user?.token, task: taskData });
+
+            if (!response || typeof response !== 'object') {
+                throw new Error('Сервер вернул некорректные данные');
+            }
+
+            const newTask = {
+                ...response,
+                _id: response._id || response.id || Date.now().toString(),
+                status: taskData.status || 'Без статуса'
+            };
+
             setTasks((prev) => [...prev, newTask]);
             return newTask;
         } catch (err) {
@@ -38,13 +49,10 @@ export const TaskProvider = ({ children }) => {
     const updateTask = async (id, taskData) => {
         try {
             await editTask({ token: user?.token, id, task: taskData });
+            const updatedTask = await fetchTaskById({ token: user?.token, id });
 
-            setTasks((prev) => {
-                const updated = prev.map((task) => (task._id === id ? { ...task, ...taskData } : task));
-                return updated;
-            });
-
-            return { ...tasks.find(t => t._id === id), ...taskData };
+            setTasks((prev) => prev.map((task) => (task._id === id ? updatedTask : task)));
+            return updatedTask;
         } catch (err) {
             setError(err.message);
             throw err;

@@ -24,38 +24,6 @@ export default function SignInPage() {
     const { updateUserInfo } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setError('');
-
-    //     if (!email || !password) {
-    //         setError('Заполните все поля');
-    //         return;
-    //     }
-
-    //     try {
-    //         const data = await signIn({
-    //             login: email,
-    //             password,
-    //         });
-
-    //         if (!data.user || !data.user.token) {
-    //             console.error('❌ Токен не найден:', data);
-    //             throw new Error('Не удалось авторизоваться. Проверьте логин и пароль.');
-    //         }
-
-    //         updateUserInfo({
-    //             token: data.user.token,
-    //             user: data.user
-    //         });
-
-    //         navigate('/', { replace: true });
-    //     } catch (err) {
-    //         console.error('❌ Ошибка входа:', err);
-    //         setError(err.message);
-    //     }
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isLoading) return;

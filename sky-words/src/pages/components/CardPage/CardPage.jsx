@@ -24,8 +24,10 @@ import {
   LoadingText,
   EditableTitle,
   StatusButton,
-  StatusList
+  StatusList,
+  ErrorMessage
 } from './CardPage.styled';
+import { useSearchParams } from 'react-router-dom';
 
 export default function CardPage() {
   const { id } = useParams();
@@ -34,12 +36,13 @@ export default function CardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-
   const { user } = useContext(AuthContext);
   const { updateTask, removeTask } = useContext(TaskContext);
-
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const shouldEdit = searchParams.get('edit') === 'true';
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -58,6 +61,9 @@ export default function CardPage() {
         setLoading(true);
         const data = await fetchTaskById({ token: user.token, id });
         setCard(data);
+        if (shouldEdit) {
+          setIsEditing(true);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -66,7 +72,7 @@ export default function CardPage() {
     };
 
     loadCard();
-  }, [id, user?.token]);
+  }, [id, user?.token, shouldEdit]);
 
   if (loading) {
     return (
@@ -95,23 +101,39 @@ export default function CardPage() {
 
   const handleSave = async () => {
     if (isSaving) return;
+
+    const trimmedTitle = card.title.trim();
+    const trimmedDesc = card.description.trim();
+
+    if (!trimmedTitle) {
+      setError('Название задачи не может быть пустым');
+      return;
+    }
+    if (!trimmedDesc) {
+      setError('Описание не может быть пустым');
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateTask(card._id, {
-        title: card.title,
-        description: card.description,
+        title: trimmedTitle,
+        description: trimmedDesc,
         topic: card.topic,
         status: card.status,
         date: card.date,
       });
 
       const freshCard = await fetchTaskById({ token: user.token, id: card._id });
-
       setCard(freshCard);
       setIsEditing(false);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes('Network')) {
+        setError('Не удалось подключиться к серверу');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setIsSaving(false);
     }
@@ -119,6 +141,11 @@ export default function CardPage() {
 
   const handleDelete = async () => {
     if (isDeleting) return;
+
+    if (!window.confirm('Вы уверены, что хотите удалить задачу?')) {
+      return;
+    }
+
     setIsDeleting(true);
     try {
       await removeTask(card._id);
@@ -143,6 +170,7 @@ export default function CardPage() {
 
   return (
     <Overlay>
+      {error && <ErrorMessage $visible>{error}</ErrorMessage>}
       <ModalBlock>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
           {isEditing ? (

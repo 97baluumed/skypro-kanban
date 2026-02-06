@@ -1,10 +1,9 @@
 import styled from 'styled-components';
-import { pulse } from '../../styles/GlobalStyles';
 
 export const Skeleton = styled.div`
   background: #eaeef6;
   border-radius: 8px;
-  animation: ${pulse} 1.6s infinite ease-in-out;
+  animation: pulse 1.6s infinite ease-in-out;
 `;
 export const LoadingWrapper = styled.div`
   width: 220px;
